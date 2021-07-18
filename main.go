@@ -25,6 +25,6 @@ func main() {
 	default:
 		fmt.Printf("空！\n")
 	}
-	// img.Pa("D:\\github\\sucai", "1111")
-	// img.GuanZhu("D:\\github\\sucai", "1111", "哈哈哈", "hhhhhh")
+	// img.Pa("D:\\github\\sucai", "111")
+	// img.GuanZhu("D:\\github\\sucai", "111", "哈哈哈", "hhhhhh")
 }
