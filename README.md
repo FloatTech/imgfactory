@@ -6,5 +6,5 @@
 ## 爬 
 打开cmd 输入
 
-`img.exe pa D:\\sucai 1073344346`
+`img.exe pa D:\\sucai 1111
 
