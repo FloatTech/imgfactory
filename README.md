@@ -151,3 +151,7 @@ func AndGif(delay int, im []*image.NRGBA) *gif.GIF {
 ## 保存gif
 
 func SaveGif(g *gif.GIF, path string) {
+
+# 上传图片
+## 上传搜狗图床
+func SGpic(s string) string {
