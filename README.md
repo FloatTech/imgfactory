@@ -52,16 +52,27 @@ func SavePng(im image.Image, path string) {
 ## 颜色
 
 > var White = []int{255, 255, 255, 255}
+> 
 > var Black = []int{0, 0, 0, 255}
+> 
 > var Red = []int{255, 0, 0, 255}
+> 
 > var Green = []int{0, 255, 0, 255}
+> 
 > var Blue = []int{0, 0, 255, 255}
+> 
 > var Yellow = []int{255, 255, 0, 255}
+> 
 > var Cyan = []int{0, 255, 255, 255}
+> 
 > var Magenta = []int{255, 0, 255, 255}
+> 
 > var Grey = []int{190, 190, 190, 255}
+> 
 > var Pink = []int{255, 181, 197, 255}
+> 
 > var Orange = []int{255, 165, 0, 255}
+> 
 > var TouM = []int{0, 0, 0, 0}
 
 # Dc
