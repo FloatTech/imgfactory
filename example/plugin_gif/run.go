@@ -38,8 +38,6 @@ func init() { // 插件主体
 			picurl = Ypath.Mo()
 		} else if List[1] == "撕" {
 			picurl = Ypath.Si()
-		} else if List[1] == "一直" {
-			picurl = Ypath.YiZhi()
 		} else {
 			picurl = Ypath.Chong()
 		}
