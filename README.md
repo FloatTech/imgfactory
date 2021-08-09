@@ -8,9 +8,13 @@
 ##处理中图像
 
 >type Dc struct {
+>
 >	Im *image.NRGBA
+>	
 >	W  int
+>	
 >	H  int
+>	
 >}
 
 ##加载图片
