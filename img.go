@@ -102,6 +102,16 @@ func Size(im image.Image, w, h int) *Dc {
 	return &dc
 }
 
+//旋转
+func Rotate(img image.Image, angle float64, w, h int) *Dc {
+	im := Size(img, w, h)
+	var dc Dc
+	dc.Im = imaging.Rotate(im.Im, angle, color.NRGBA{0, 0, 0, 0})
+	dc.W = dc.Im.Bounds().Size().X
+	dc.H = dc.Im.Bounds().Size().Y
+	return &dc
+}
+
 //横向合并图片
 func AndW(im []*image.NRGBA) *Dc {
 	dc := make([]*Dc, len(im))
