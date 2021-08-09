@@ -16,14 +16,6 @@ import (
 	"github.com/fogleman/gg"
 )
 
-//创建多级目录和设置权限
-// os.MkdirAll("./benben/test",0777)
-//删除目录
-// err:=os.Remove("./benben")
-// if err!=nil{
-//     fmt.Println(err)
-// }
-
 //处理中图像
 type Dc struct {
 	Im *image.NRGBA
