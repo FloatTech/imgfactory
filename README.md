@@ -1,5 +1,5 @@
 # img
-具体大概用法看 example ，里头写了一个 [ZeroBot]{github.com/wdvxdr1123/ZeroBot} 插件
+具体大概用法看 example ，里头写了一个 [ZeroBot](github.com/wdvxdr1123/ZeroBot) 插件
 >需要另外下载素材包配合使用:https://github.com/tdf1939/sucai
 
 
