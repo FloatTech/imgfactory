@@ -5,7 +5,6 @@ import (
 	"image/color"
 	"image/draw"
 
-	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 )
 
@@ -27,7 +26,7 @@ func (dst *Dc) Size(w, h int) *Dc {
 
 //上部插入图片
 func (dst *Dc) Over(im image.Image, w, h, x, y int) *Dc {
-	im1 := imaging.Resize(im, w, h, imaging.Lanczos)
+	im1 := Size(im, w, h).Im
 	//叠加图片
 	draw.Over.Draw(dst.Im, dst.Im.Bounds(), im1, im1.Bounds().Min.Sub(image.Pt(x, y)))
 	return dst
@@ -35,7 +34,7 @@ func (dst *Dc) Over(im image.Image, w, h, x, y int) *Dc {
 
 //底部插入图片
 func (dst *Dc) DstOver(im image.Image, w, h, x, y int) *Dc {
-	im1 := imaging.Resize(im, w, h, imaging.Lanczos)
+	im1 := Size(im, w, h).Im
 	dc := dst.Clone()
 	dst = NewDc(dst.W, dst.H, color.NRGBA{0, 0, 0, 0})
 	draw.Over.Draw(dst.Im, dst.Im.Bounds(), im1, im1.Bounds().Min.Sub(image.Pt(x, y)))
