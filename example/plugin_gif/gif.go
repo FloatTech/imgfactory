@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"image"
 
-	// "github.com/tdf1939/img"
-	img "github.com/FloatTech/ZeroBot-Plugin/img"
+	"github.com/tdf1939/img"
 )
 
 //摸
