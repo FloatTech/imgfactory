@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"image/draw"
 
+	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 )
 
@@ -22,6 +23,24 @@ func (dst *Dc) Clone() *Dc {
 func (dst *Dc) Size(w, h int) *Dc {
 	dst = Size(dst.Im, w, h)
 	return dst
+}
+
+//水平翻转
+func (dst *Dc) FlipH() *Dc {
+	return &Dc{
+		Im: imaging.FlipH(dst.Im),
+		W:  dst.W,
+		H:  dst.H,
+	}
+}
+
+//垂直翻转
+func (dst *Dc) FlipV() *Dc {
+	return &Dc{
+		Im: imaging.FlipV(dst.Im),
+		W:  dst.W,
+		H:  dst.H,
+	}
 }
 
 //上部插入图片

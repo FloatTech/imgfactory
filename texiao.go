@@ -2,6 +2,15 @@ package img
 
 import "github.com/disintegration/imaging"
 
+//亮度(-100, 100)
+func (dst *Dc) AdjustBrightness(a float64) *Dc {
+	return &Dc{
+		Im: imaging.AdjustBrightness(dst.Im, a),
+		W:  dst.W,
+		H:  dst.H,
+	}
+}
+
 //对比度(-100, 100)
 func (dst *Dc) AdjustContrast(a float64) *Dc {
 	return &Dc{
@@ -29,7 +38,7 @@ func (dst *Dc) Sharpen(a float64) *Dc {
 	}
 }
 
-//模糊图像
+//模糊图像 正数
 func (dst *Dc) Blur(a float64) *Dc {
 	return &Dc{
 		Im: imaging.Blur(dst.Im, a),
