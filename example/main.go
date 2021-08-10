@@ -60,7 +60,7 @@ func main() {
 	})
 
 	// 帮助
-	zero.OnFullMatchGroup([]string{"help", "/help", ".help", "菜单", "帮助"}, zero.OnlyToMe).SetBlock(true).SetPriority(999).
+	zero.OnFullMatchGroup([]string{"help", "/help", ".help", "菜单", "帮助"}, zero.OnlyToMe).SetBlock(false).SetPriority(999).
 		Handle(func(ctx *zero.Ctx) {
 			ctx.Send(banner)
 		})
