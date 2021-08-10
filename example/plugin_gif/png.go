@@ -36,11 +36,10 @@ func (cc Paths) GuanZhu(txt1, txt2 string) string {
 	// 加载图片
 	im := img.ImDc(cc.Pngs[0], 0, 0)
 	//叠加图片
-	dst := img.ImDc(`data/image/sucai/vguanzhu/gg.png`, 0, 0).DstOver(im.Im, 155, 155, 45, 45)
-	dc := dst.Text(fmt.Sprintf(`data/image/sucai/font/3.ttf`, cc.Sc), 38, img.Black, 210, 110, txt1).
-		Text(fmt.Sprintf(`data/image/sucai/font/3.ttf`, cc.Sc), 36, img.Grey, 210, 170, txt2).
+	dst := img.ImDc(cc.Sc+`guanzhu/gg.png`, 0, 0).DstOver(im.Im, 155, 155, 45, 45)
+	dc := dst.Text(`data/image/sucai/font/3.ttf`, 38, img.Black, 210, 110, txt1).
+		Text(`data/image/sucai/font/3.ttf`, 36, img.Grey, 210, 170, txt2).
 		Im
 	img.SavePng(dc, cc.User+`关注.gif`)
 	return img.SGpic(cc.User + `关注.gif`)
-
 }
