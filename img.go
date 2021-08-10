@@ -80,7 +80,7 @@ func Size(im image.Image, w, h int) *Dc {
 	} else if w <= 0 && h <= 0 {
 		dc.W = im.Bounds().Size().X
 		dc.H = im.Bounds().Size().Y
-		dc.Im = image.NewNRGBA(image.Rect(0, 0, dc.W, dc.W))
+		dc.Im = image.NewNRGBA(image.Rect(0, 0, dc.W, dc.H))
 		draw.Over.Draw(dc.Im, dc.Im.Bounds(), im, im.Bounds().Min)
 	} else if w == 0 {
 		dc.H = h
