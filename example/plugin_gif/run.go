@@ -21,12 +21,14 @@ func FirstValueInList(list []string) zero.Rule {
 	}
 }
 
-var a = []string{"爬", "冲", "摸", "抬", "次", "吃", "敲", "透", "撕",
-	"一直", "灰度", "上翻", "下翻", "左翻", "右翻", "反色", "倒放"}
+var a1 = []string{"爬", "冲", "摸", "抬", "次", "吃", "敲", "透", "撕", "一直",
+	"灰度", "上翻", "下翻", "左翻", "右翻", "反色", "浮雕", "打码", "负片"}
+
+// var a2 = []string{"旋转", "变形"}
 
 func init() { // 插件主体
 
-	zero.OnRegex(`^(` + strings.Join(a, "|") + `)\D*?(\[CQ:(image.+?url=(.+)|at.+?(\d{5,11}))\].*|(\d+))$`).
+	zero.OnRegex(`^(` + strings.Join(a1, "|") + `)\D*?(\[CQ:(image.+?url=(.+)|at.+?(\d{5,11}))\].*|(\d+))$`).
 		SetBlock(true).SetPriority(20).Handle(func(ctx *zero.Ctx) {
 		NewPath(ctx.Event.UserID)
 		List := ctx.State["regex_matched"].([]string)
@@ -38,8 +40,12 @@ func init() { // 插件主体
 			picurl = Ypath.Mo()
 		} else if List[1] == "撕" {
 			picurl = Ypath.Si()
-		} else {
+		} else if List[1] == "冲" {
 			picurl = Ypath.Chong()
+		} else if List[1] == "一直" {
+			picurl = Ypath.YiZhi()
+		} else {
+			picurl = Ypath.Other(List[1]) //"灰度", "上翻", "下翻", "左翻", "右翻", "反色", "倒放", "浮雕", "打码", "负片"
 		}
 		ctx.SendChain(
 			//发送图片

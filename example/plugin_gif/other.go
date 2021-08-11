@@ -20,14 +20,15 @@ type Paths struct {
 }
 
 var Ypath = Paths{
-	Sc:   `https://ghproxy.com/https://raw.githubusercontent.com/tdf1939/sucai/main/`,
+	Sc: `https://ghproxy.com/https://raw.githubusercontent.com/tdf1939/sucai/main/`,
+	// Sc:   `data/image/sucai/`,
 	Pngs: []string{`data/image/user/1/yuan.gif`},
 }
 
 func ScPath() string {
-	_, err := os.Stat(`data/image/sucai/`)
+	_, err := os.Stat(`data/image/sucai/pa/`)
 	if err == nil {
-		return `data/image/sucai`
+		return `data/image/sucai/`
 	}
 	// return `https://cdn.jsdelivr.net/gh/tdf1939/sucai/`
 	return `https://ghproxy.com/https://raw.githubusercontent.com/tdf1939/sucai/main/`
@@ -38,6 +39,7 @@ func NewPath(user int64) string {
 	Ypath.User = `data/image/user/` + strconv.FormatInt(user, 10) + `/`
 	os.MkdirAll(Ypath.User, 0777)
 	Ypath.Pngs[0] = Ypath.User + "yuan.gif"
+	Ypath.Sc = ScPath()
 	return Ypath.User
 }
 
