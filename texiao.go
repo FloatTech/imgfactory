@@ -1,6 +1,10 @@
 package img
 
-import "github.com/disintegration/imaging"
+import (
+	"image/color"
+
+	"github.com/disintegration/imaging"
+)
 
 //亮度(-100, 100)
 func (dst *Dc) AdjustBrightness(a float64) *Dc {
@@ -49,20 +53,35 @@ func (dst *Dc) Blur(a float64) *Dc {
 
 //灰度
 func (dst *Dc) Grayscale() *Dc {
-	return &Dc{
-		Im: imaging.Grayscale(dst.Im),
-		W:  dst.W,
-		H:  dst.H,
+	b := dst.Im.Bounds()
+	for y1 := b.Min.Y; y1 <= b.Max.Y; y1++ {
+		for x1 := b.Min.X; x1 <= b.Max.X; x1++ {
+			a := dst.Im.At(x1, y1)
+			c := color.NRGBAModel.Convert(a).(color.NRGBA)
+			f := 0.299*float64(c.R) + 0.587*float64(c.G) + 0.114*float64(c.B) + 0.5
+			c.R = uint8(f)
+			c.G = uint8(f)
+			c.B = uint8(f)
+			dst.Im.Set(x1, y1, c)
+		}
 	}
+	return dst
 }
 
 //反色
 func (dst *Dc) Invert() *Dc {
-	return &Dc{
-		Im: imaging.Invert(dst.Im),
-		W:  dst.W,
-		H:  dst.H,
+	b := dst.Im.Bounds()
+	for y1 := b.Min.Y; y1 <= b.Max.Y; y1++ {
+		for x1 := b.Min.X; x1 <= b.Max.X; x1++ {
+			a := dst.Im.At(x1, y1)
+			c := color.NRGBAModel.Convert(a).(color.NRGBA)
+			c.R = 255 - c.R
+			c.G = 255 - c.G
+			c.B = 255 - c.B
+			dst.Im.Set(x1, y1, c)
+		}
 	}
+	return dst
 }
 
 //浮雕

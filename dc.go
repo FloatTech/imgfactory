@@ -68,8 +68,8 @@ func (dst *Dc) Circle(r int) *Dc {
 	}
 	dst = dst.Size(2*r, 2*r)
 	b := dst.Im.Bounds()
-	for y1 := b.Min.Y; y1 < b.Max.Y; y1++ {
-		for x1 := b.Min.X; x1 < b.Max.X; x1++ {
+	for y1 := b.Min.Y; y1 <= b.Max.Y; y1++ {
+		for x1 := b.Min.X; x1 <= b.Max.X; x1++ {
 			if (x1-r)*(x1-r)+(y1-r)*(y1-r) > r*r {
 				dst.Im.Set(x1, y1, color.NRGBA{0, 0, 0, 0})
 			}
@@ -90,8 +90,8 @@ func (dst *Dc) Clip(w, h, x, y int) *Dc {
 func (dst *Dc) ClipCircle(x, y, r int) *Dc {
 	dst = dst.Clip(2*r, 2*r, x-r, y-r)
 	b := dst.Im.Bounds()
-	for y1 := b.Min.Y; y1 < b.Max.Y; y1++ {
-		for x1 := b.Min.X; x1 < b.Max.X; x1++ {
+	for y1 := b.Min.Y; y1 <= b.Max.Y; y1++ {
+		for x1 := b.Min.X; x1 <= b.Max.X; x1++ {
 			if (x1-x)*(x1-x)+(y1-y)*(y1-y) > r*r {
 				dst.Im.Set(x1, y1, color.NRGBA{0, 0, 0, 0})
 			}
@@ -104,8 +104,8 @@ func (dst *Dc) ClipCircle(x, y, r int) *Dc {
 func (dst *Dc) DstClipCircle(x, y, r int) *Dc {
 	// dc := dst.Clip(x-r, y-r, 2*r, 2*r)
 	b := dst.Im.Bounds()
-	for y1 := b.Min.Y; y1 < b.Max.Y; y1++ {
-		for x1 := b.Min.X; x1 < b.Max.X; x1++ {
+	for y1 := b.Min.Y; y1 <= b.Max.Y; y1++ {
+		for x1 := b.Min.X; x1 <= b.Max.X; x1++ {
 			if (x1-x)*(x1-x)+(y1-y)*(y1-y) <= r*r {
 				dst.Im.Set(x1, y1, color.NRGBA{0, 0, 0, 0})
 			}
