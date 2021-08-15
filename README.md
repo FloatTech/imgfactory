@@ -1,5 +1,6 @@
 # img
 具体大概用法看 example ，里头写了一个 [ZeroBot QQ机器人](https://github.com/wdvxdr1123/ZeroBot) 插件
+目前为止有 摸 冲 搓 反色 翻上 灰度 等
 >需要另外下载素材包配合使用:https://github.com/tdf1939/sucai
 
 
