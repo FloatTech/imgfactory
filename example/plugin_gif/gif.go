@@ -5,6 +5,7 @@ import (
 	"image"
 
 	"github.com/tdf1939/img"
+	// "bot/img" // 基础词库
 )
 
 //摸
@@ -19,6 +20,24 @@ func (cc Paths) Mo() string {
 	}
 	img.SaveGif(img.AndGif(1, mo), cc.User+`摸.gif`)
 	return img.SGpic(cc.User + `摸.gif`)
+}
+
+//摸
+func (cc Paths) Cuo() string {
+	tou := img.ImDc(cc.Pngs[0], 110, 110).Circle(0).Im
+	m1 := img.Rotate(tou, 72, 0, 0)
+	m2 := img.Rotate(tou, 144, 0, 0)
+	m3 := img.Rotate(tou, 216, 0, 0)
+	m4 := img.Rotate(tou, 288, 0, 0)
+	cuo := []*image.NRGBA{
+		img.ImDc(fmt.Sprintf(`%v/cuo/0.png`, cc.Sc), 0, 0).DstOverC(tou, 0, 0, 75, 130).Im,
+		img.ImDc(fmt.Sprintf(`%v/cuo/1.png`, cc.Sc), 0, 0).DstOverC(m1.Im, 0, 0, 75, 130).Im,
+		img.ImDc(fmt.Sprintf(`%v/cuo/2.png`, cc.Sc), 0, 0).DstOverC(m2.Im, 0, 0, 75, 130).Im,
+		img.ImDc(fmt.Sprintf(`%v/cuo/3.png`, cc.Sc), 0, 0).DstOverC(m3.Im, 0, 0, 75, 130).Im,
+		img.ImDc(fmt.Sprintf(`%v/cuo/4.png`, cc.Sc), 0, 0).DstOverC(m4.Im, 0, 0, 75, 130).Im,
+	}
+	img.SaveGif(img.AndGif(5, cuo), cc.User+`搓.gif`)
+	return img.SGpic(cc.User + `搓.gif`)
 }
 
 //冲
