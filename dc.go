@@ -51,12 +51,30 @@ func (dst *Dc) Over(im image.Image, w, h, x, y int) *Dc {
 	return dst
 }
 
+//上部插入图片 x,y是中心点
+func (dst *Dc) OverC(im image.Image, w, h, x, y int) *Dc {
+	im1 := Size(im, w, h)
+	//叠加图片
+	draw.Over.Draw(dst.Im, dst.Im.Bounds(), im1.Im, im1.Im.Bounds().Min.Sub(image.Pt(x-im1.W/2, y-im1.H/2)))
+	return dst
+}
+
 //底部插入图片
 func (dst *Dc) DstOver(im image.Image, w, h, x, y int) *Dc {
 	im1 := Size(im, w, h).Im
 	dc := dst.Clone()
 	dst = NewDc(dst.W, dst.H, color.NRGBA{0, 0, 0, 0})
 	draw.Over.Draw(dst.Im, dst.Im.Bounds(), im1, im1.Bounds().Min.Sub(image.Pt(x, y)))
+	draw.Over.Draw(dst.Im, dst.Im.Bounds(), dc.Im, dc.Im.Bounds().Min)
+	return dst
+}
+
+//底部插入图片 x,y是中心点
+func (dst *Dc) DstOverC(im image.Image, w, h, x, y int) *Dc {
+	im1 := Size(im, w, h)
+	dc := dst.Clone()
+	dst = NewDc(dst.W, dst.H, color.NRGBA{0, 0, 0, 0})
+	draw.Over.Draw(dst.Im, dst.Im.Bounds(), im1.Im, im1.Im.Bounds().Min.Sub(image.Pt(x-im1.W/2, y-im1.H/2)))
 	draw.Over.Draw(dst.Im, dst.Im.Bounds(), dc.Im, dc.Im.Bounds().Min)
 	return dst
 }
@@ -68,8 +86,8 @@ func (dst *Dc) Circle(r int) *Dc {
 	}
 	dst = dst.Size(2*r, 2*r)
 	b := dst.Im.Bounds()
-	for y1 := b.Min.Y; y1 <= b.Max.Y; y1++ {
-		for x1 := b.Min.X; x1 <= b.Max.X; x1++ {
+	for y1 := b.Min.Y; y1 < b.Max.Y; y1++ {
+		for x1 := b.Min.X; x1 < b.Max.X; x1++ {
 			if (x1-r)*(x1-r)+(y1-r)*(y1-r) > r*r {
 				dst.Im.Set(x1, y1, color.NRGBA{0, 0, 0, 0})
 			}
@@ -90,8 +108,8 @@ func (dst *Dc) Clip(w, h, x, y int) *Dc {
 func (dst *Dc) ClipCircle(x, y, r int) *Dc {
 	dst = dst.Clip(2*r, 2*r, x-r, y-r)
 	b := dst.Im.Bounds()
-	for y1 := b.Min.Y; y1 <= b.Max.Y; y1++ {
-		for x1 := b.Min.X; x1 <= b.Max.X; x1++ {
+	for y1 := b.Min.Y; y1 < b.Max.Y; y1++ {
+		for x1 := b.Min.X; x1 < b.Max.X; x1++ {
 			if (x1-x)*(x1-x)+(y1-y)*(y1-y) > r*r {
 				dst.Im.Set(x1, y1, color.NRGBA{0, 0, 0, 0})
 			}
@@ -104,8 +122,8 @@ func (dst *Dc) ClipCircle(x, y, r int) *Dc {
 func (dst *Dc) DstClipCircle(x, y, r int) *Dc {
 	// dc := dst.Clip(x-r, y-r, 2*r, 2*r)
 	b := dst.Im.Bounds()
-	for y1 := b.Min.Y; y1 <= b.Max.Y; y1++ {
-		for x1 := b.Min.X; x1 <= b.Max.X; x1++ {
+	for y1 := b.Min.Y; y1 < b.Max.Y; y1++ {
+		for x1 := b.Min.X; x1 < b.Max.X; x1++ {
 			if (x1-x)*(x1-x)+(y1-y)*(y1-y) <= r*r {
 				dst.Im.Set(x1, y1, color.NRGBA{0, 0, 0, 0})
 			}
