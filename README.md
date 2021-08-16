@@ -121,6 +121,9 @@ func (dst *Dc) Sharpen(a float64) *Dc {
 ## 模糊图像
 func (dst *Dc) Blur(a float64) *Dc {
 
+## 颜色替换
+func (dst *Dc) ColSet(a1, a2 color.NRGBA) *Dc {
+
 ## 灰度
 func (dst *Dc) Grayscale() *Dc {
 
