@@ -2,17 +2,28 @@ package img
 
 import (
 	"image/color"
+	"math"
 
 	"github.com/disintegration/imaging"
 )
 
 //亮度(-100, 100)
-func (dst *Dc) AdjustBrightness(a float64) *Dc {
-	return &Dc{
-		Im: imaging.AdjustBrightness(dst.Im, a),
-		W:  dst.W,
-		H:  dst.H,
+func (dst *Dc) AdjustBrightness(s float64) *Dc {
+	s = math.Min(math.Max(s, -100.0), 100.0)
+	b := dst.Im.Bounds()
+	for y1 := b.Min.Y; y1 <= b.Max.Y; y1++ {
+		for x1 := b.Min.X; x1 <= b.Max.X; x1++ {
+			a := dst.Im.At(x1, y1)
+			c := color.NRGBAModel.Convert(a).(color.NRGBA)
+			f := 255.0 * s / 100.0
+			c.R = FloatUint8(f + float64(c.R))
+			c.G = FloatUint8(f + float64(c.R))
+			c.B = FloatUint8(f + float64(c.R))
+			dst.Im.Set(x1, y1, c)
+		}
 	}
+
+	return dst
 }
 
 //对比度(-100, 100)
@@ -58,10 +69,10 @@ func (dst *Dc) Grayscale() *Dc {
 		for x1 := b.Min.X; x1 <= b.Max.X; x1++ {
 			a := dst.Im.At(x1, y1)
 			c := color.NRGBAModel.Convert(a).(color.NRGBA)
-			f := 0.299*float64(c.R) + 0.587*float64(c.G) + 0.114*float64(c.B) + 0.5
-			c.R = uint8(f)
-			c.G = uint8(f)
-			c.B = uint8(f)
+			f := 0.299*float64(c.R) + 0.587*float64(c.G) + 0.114*float64(c.B)
+			c.R = FloatUint8(f)
+			c.G = FloatUint8(f)
+			c.B = FloatUint8(f)
 			dst.Im.Set(x1, y1, c)
 		}
 	}
