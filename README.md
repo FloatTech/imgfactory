@@ -41,6 +41,9 @@ func Text(font string, size float64, col []int, col1 []int, txt string) *Dc {
 ## 保存png
 func SavePng(im image.Image, path string) {
 
+## float64转uint8
+func FloatUint8(a float64) uint8 {
+
 ## 颜色
 > var White = []int{255, 255, 255, 255}
 > 
@@ -79,8 +82,14 @@ func Rotate(img image.Image, angle float64, w, h int) *Dc {
 ## 上部插入图片
 func (dst *Dc) Over(im image.Image, w, h, x, y int) *Dc {
 
+## 上部插入图片 x,y是插入图片中心点
+func (dst *Dc) OverC(im image.Image, w, h, x, y int) *Dc {
+
 ## 底部插入图片
 func (dst *Dc) DstOver(im image.Image, w, h, x, y int) *Dc {
+
+## 底部插入图片 x,y是插入图片中心点
+func (dst *Dc) DstOverC(im image.Image, w, h, x, y int) *Dc {
 
 ## 获取圆图
 func (dst *Dc) Circle(r int) *Dc {
@@ -97,6 +106,11 @@ func (dst *Dc) DstClipCircle(x, y, r int) *Dc {
 ## 插入文本
 func (dst *Dc) Text(font string, size float64, col []int, x, y float64, txt string) *Dc {
 
+## 亮度(-100, 100)
+func (dst *Dc) AdjustBrightness(s float64) *Dc {
+
+## 对比度(-100, 100)
+func (dst *Dc) AdjustContrast(a float64) *Dc {
 
 ## 饱和度(-100, 100)
 func (dst *Dc) AdjustSaturation(a float64) *Dc {
