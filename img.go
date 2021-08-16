@@ -169,6 +169,18 @@ func SavePng(im image.Image, path string) {
 	png.Encode(f, im)       //写入
 }
 
+//float64转uint8
+func FloatUint8(a float64) uint8 {
+	b := int64(a + 0.5)
+	if b > 255 {
+		return 255
+	}
+	if b > 0 {
+		return uint8(b)
+	}
+	return 0
+}
+
 //颜色
 var White = []int{255, 255, 255, 255}
 var Black = []int{0, 0, 0, 255}
