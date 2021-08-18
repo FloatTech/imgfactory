@@ -1,4 +1,4 @@
-module bot
+module github.com/tdf1939/img/bot
 
 go 1.16
 
