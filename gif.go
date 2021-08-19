@@ -1,42 +1,64 @@
-package img
+package plugin_gif
 
 import (
 	"image"
-	"image/color"
-	"image/draw"
-	"image/gif"
-	"os"
 
-	"github.com/ericpauley/go-quantize/quantize"
+	"github.com/tdf1939/img"
+	// "bot/img" // 基础词库
 )
 
-//使用以下函数将image.Image转换为 *Paletted。最多256色
-func GetPaletted(im image.Image) *image.Paletted {
-	b := im.Bounds().Size()
-	q := quantize.MedianCutQuantizer{AddTransparent: true}
-	p := q.Quantize(make([]color.Color, 0, 256), im)
-	cp := image.NewPaletted(image.Rect(0, 0, b.X, b.Y), p)
-	draw.Src.Draw(cp, cp.Bounds(), im, im.Bounds().Min)
-	return cp
-}
-
-//合并成gif,1 dealy 10毫秒
-func AndGif(delay int, im []*image.NRGBA) *gif.GIF {
-	g := &gif.GIF{}
-
-	for _, stc := range im {
-		g.Image = append(g.Image, GetPaletted(stc))             //每帧图片
-		g.Delay = append(g.Delay, delay)                        //每帧间隔，1=10毫秒
-		g.Disposal = append(g.Disposal, gif.DisposalBackground) //透明图片需要设置
+//摸
+func (cc Paths) Mo() string {
+	tou := img.ImDc(cc.Pngs[0], 0, 0).Circle(0).Im
+	mo := []*image.NRGBA{
+		img.ImDc(cc.Sc+`mo/0.png`, 0, 0).DstOver(tou, 80, 80, 32, 32).Im,
+		img.ImDc(cc.Sc+`mo/1.png`, 0, 0).DstOver(tou, 70, 90, 42, 22).Im,
+		img.ImDc(cc.Sc+`mo/2.png`, 0, 0).DstOver(tou, 75, 85, 37, 27).Im,
+		img.ImDc(cc.Sc+`mo/3.png`, 0, 0).DstOver(tou, 85, 75, 27, 37).Im,
+		img.ImDc(cc.Sc+`mo/4.png`, 0, 0).DstOver(tou, 90, 70, 22, 42).Im,
 	}
-	g.LoopCount = -1
-	return g
+	img.SaveGif(img.AndGif(1, mo), cc.User+`摸.gif`)
+	return img.SGpic(cc.User + `摸.gif`)
 }
 
-//保存gif
-func SaveGif(g *gif.GIF, path string) {
+//摸
+func (cc Paths) Cuo() string {
+	tou := img.ImDc(cc.Pngs[0], 110, 110).Circle(0).Im
+	m1 := img.Rotate(tou, 72, 0, 0)
+	m2 := img.Rotate(tou, 144, 0, 0)
+	m3 := img.Rotate(tou, 216, 0, 0)
+	m4 := img.Rotate(tou, 288, 0, 0)
+	cuo := []*image.NRGBA{
+		img.ImDc(cc.Sc+`cuo/0.png`, 0, 0).DstOverC(tou, 0, 0, 75, 130).Im,
+		img.ImDc(cc.Sc+`cuo/1.png`, 0, 0).DstOverC(m1.Im, 0, 0, 75, 130).Im,
+		img.ImDc(cc.Sc+`cuo/2.png`, 0, 0).DstOverC(m2.Im, 0, 0, 75, 130).Im,
+		img.ImDc(cc.Sc+`cuo/3.png`, 0, 0).DstOverC(m3.Im, 0, 0, 75, 130).Im,
+		img.ImDc(cc.Sc+`cuo/4.png`, 0, 0).DstOverC(m4.Im, 0, 0, 75, 130).Im,
+	}
+	img.SaveGif(img.AndGif(5, cuo), cc.User+`搓.gif`)
+	return img.SGpic(cc.User + `搓.gif`)
+}
 
-	f, _ := os.Create(path) //创建文件
-	defer f.Close()         //关闭文件
-	gif.EncodeAll(f, g)     //写入
+//拍
+func (cc Paths) Pai() string {
+	tou := img.ImDc(cc.Pngs[0], 30, 30).Circle(0).Im
+	pai := []*image.NRGBA{
+		img.ImDc(cc.Sc+`pai/0.png`, 0, 0).Over(tou, 0, 0, 1, 47).Im,
+		img.ImDc(cc.Sc+`pai/1.png`, 0, 0).Over(tou, 0, 0, 1, 67).Im,
+	}
+	img.SaveGif(img.AndGif(1, pai), cc.User+`拍.gif`)
+	return img.SGpic(cc.User + `拍.gif`)
+
+}
+
+//冲
+func (cc Paths) Chong() string {
+	tou := img.ImDc(cc.Pngs[0], 0, 0).Circle(0).Im
+	chong := []*image.NRGBA{
+		img.ImDc(cc.Sc+`xqe/0.png`, 0, 0).Over(tou, 30, 30, 15, 53).Im,
+		img.ImDc(cc.Sc+`xqe/1.png`, 0, 0).Over(tou, 30, 30, 40, 53).Im,
+	}
+	img.SaveGif(img.AndGif(1, chong), cc.User+`冲.gif`)
+	return img.SGpic(cc.User + `冲.gif`)
+
 }
