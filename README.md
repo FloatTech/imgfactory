@@ -142,7 +142,7 @@ func (dst *Dc) Convolve3x3() *Dc {
 ## 使用以下函数将image.Image转换为 *Paletted。最多256色
 func GetPaletted(im image.Image) *image.Paletted {
 
-## 上部插入gif图片
+## 上部插入一组图片
 func (dst *Dc) OverG(im []*image.NRGBA, w, h, x, y int) []*image.NRGBA {
 
 ## 合并成gif,1 dealy 10毫秒
