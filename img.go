@@ -64,9 +64,26 @@ func NewDc(w, h int, fillColor color.Color) *Dc {
 	return &dst
 }
 
-//载入图片作底图
+//载入图片第一帧作底图
 func ImDc(path string, w, h int) *Dc {
 	return Size(Load(path), w, h)
+}
+
+//加载图片每一帧图片
+func ImsDc(path string, w, h int) []*Dc {
+	file, _ := os.Open(path)
+	defer file.Close()
+	//读取路径
+	im, err := gif.DecodeAll(file)
+	var ims []*img.Dc
+	if err != nil {
+		ims = append(ims, ImDc(path, w, h))
+	} else {
+		for _, v := range im.Image {
+			ims = append(ims, Size(v, w, h))
+		}
+	}
+	return ims
 }
 
 //变形
