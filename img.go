@@ -71,9 +71,12 @@ func ImDc(path string, w, h int) *Dc {
 
 //加载图片每一帧图片
 func ImsDc(path string, w, h int) []*Dc {
+	var res *http.Response
+	var err error
 	var im *gif.GIF
+	var ims []*Dc
 	if strings.HasPrefix(path, "http") {
-		res, err := http.Get(path)
+		res, err = http.Get(path)
 		if err != nil {
 			fmt.Println("A error occurred!")
 		}
@@ -81,15 +84,14 @@ func ImsDc(path string, w, h int) []*Dc {
 		// 获得get请求响应的reader对象
 		reader := bufio.NewReaderSize(res.Body, 32*1024)
 		//读取路径
-			im, err := gif.DecodeAll(reader)
+		im, err = gif.DecodeAll(reader)
 	} else {
 		// 加载路径
 		file, _ := os.Open(path)
 		defer file.Close()
 		//读取路径
-		im, err := gif.DecodeAll(file)
+		im, err = gif.DecodeAll(file)
 	}
-	var ims []*img.Dc
 	if err != nil {
 		ims = append(ims, Size(Load(path), w, h))
 	} else {
