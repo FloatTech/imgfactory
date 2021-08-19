@@ -77,7 +77,7 @@ func ImsDc(path string, w, h int) []*Dc {
 	im, err := gif.DecodeAll(file)
 	var ims []*img.Dc
 	if err != nil {
-		ims = append(ims, ImDc(path, w, h))
+		ims = append(ims, Size(Load(path), w, h))
 	} else {
 		for _, v := range im.Image {
 			ims = append(ims, Size(v, w, h))
