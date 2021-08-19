@@ -69,11 +69,11 @@ func ImDc(path string, w, h int) *Dc {
 	return Size(Load(path), w, h)
 }
 
-func ImsDc(path string, w, h int) []*img.Dc {
+func ImsDc(path string, w, h int) []*Dc {
 	var res *http.Response
 	var err error
 	var im *gif.GIF
-	var ims []*img.Dc
+	var ims []*Dc
 	if strings.HasPrefix(path, "http") {
 		res, err = http.Get(path)
 		if err != nil {
@@ -91,12 +91,12 @@ func ImsDc(path string, w, h int) []*img.Dc {
 		//读取路径
 		im, err = gif.DecodeAll(file)
 	}
-	im0 := img.Size(img.Load(path), w, h)
+	im0 := Size(Load(path), w, h)
 	if err != nil {
-		ims = append(ims, img.Size(img.Load(path), w, h))
+		ims = append(ims, Size(Load(path), w, h))
 	} else {
 		for _, v := range im.Image {
-			im1 := img.Size(v, w, h).Im
+			im1 := Size(v, w, h).Im
 			im2 := im0.Over(im1, 0, 0, 0, 0).Clone()
 			ims = append(ims, im2)
 		}
