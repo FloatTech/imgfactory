@@ -23,8 +23,8 @@ func Load(path string) image.Image {
 ## 载入图片第一帧作底图
 func ImDc(path string, w, h int) *Dc {
 
-## 加载图片每一帧图片
-func ImsDc(path string, w, h int) []*Dc {
+// 加载图片每一帧图片
+func ImsDc(path string, w, h int) []*image.NRGBA {
 
 ## 载入图片作底图
 func ImDc(path string, w, h int) *Dc {
