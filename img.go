@@ -71,11 +71,11 @@ func ImDc(path string, w, h int) *Dc {
 }
 
 // 加载图片每一帧图片
-func ImsDc(path string, w, h int) []*Dc {
+func ImsDc(path string, w, h int) []*image.NRGBA {
 	var res *http.Response
 	var err error
 	var im *gif.GIF
-	var ims []*Dc
+	var ims []*image.NRGBA
 	if strings.HasPrefix(path, "http") {
 		res, err = http.Get(path)
 		if err != nil {
@@ -95,12 +95,12 @@ func ImsDc(path string, w, h int) []*Dc {
 	}
 	im0 := Size(Load(path), w, h)
 	if err != nil {
-		ims = append(ims, Size(Load(path), w, h))
+		ims = append(ims, Size(Load(path), w, h).Im)
 	} else {
 		for _, v := range im.Image {
 			im1 := Size(v, w, h).Im
 			im2 := im0.Over(im1, 0, 0, 0, 0).Clone()
-			ims = append(ims, im2)
+			ims = append(ims, im2.Im)
 		}
 	}
 	return ims
