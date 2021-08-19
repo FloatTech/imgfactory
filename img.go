@@ -7,6 +7,7 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
+	"image/gif"
 	"image/png"
 	"net/http"
 	"os"
@@ -69,6 +70,7 @@ func ImDc(path string, w, h int) *Dc {
 	return Size(Load(path), w, h)
 }
 
+// 加载图片每一帧图片
 func ImsDc(path string, w, h int) []*Dc {
 	var res *http.Response
 	var err error
