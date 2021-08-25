@@ -3,6 +3,7 @@
 目前为止有 摸 冲 搓 反色 翻上 灰度 等
 >需要另外下载素材包配合使用:https://github.com/tdf1939/sucai
 
+新案例：生成随机头像 ：https://github.com/tdf1939/ZeroBot-Plugin-picrew
 
 # png
 
