@@ -28,7 +28,7 @@ func AndGif(delay int, im []*image.NRGBA) *gif.GIF {
 		g.Delay = append(g.Delay, delay)                        //每帧间隔，1=10毫秒
 		g.Disposal = append(g.Disposal, gif.DisposalBackground) //透明图片需要设置
 	}
-	g.LoopCount = -1
+	g.LoopCount = 0
 	return g
 }
 
