@@ -220,10 +220,18 @@ func Text(font string, size float64, col []int, col1 []int, txt string) *ImgFact
 }
 
 // 保存png
-func SavePng(im image.Image, path string) {
-	f, _ := os.Create(path) // 创建文件
-	defer f.Close()         // 关闭文件
-	png.Encode(f, im)       // 写入
+func SavePng(im image.Image, path string) error {
+	f, err := os.Create(path) // 创建文件
+	if err == nil {
+		err = png.Encode(f, im) // 写入
+		f.Close()
+		if err != nil {
+			logrus.Errorln("[img] save img err:", err)
+		}
+	} else {
+		logrus.Errorln("[img] create file at", path, "err:", err)
+	}
+	return err
 }
 
 // float64转uint8
