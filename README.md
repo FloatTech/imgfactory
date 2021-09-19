@@ -23,5 +23,5 @@ func LoadFirstFrame(path string, w, h int) *ImgFactory
 
 ### 加载图片每一帧图片
 ```go
-func LoadAllFrames(path string, w, h int) []*image.NRGBA {
+func LoadAllFrames(path string, w, h int) []*image.NRGBA
 ```
