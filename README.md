@@ -1,4 +1,6 @@
-# imgfactory
+> 本插件已合并入[zbputils](https://github.com/FloatTech/zbputils)，本仓库不再迭代/维护
+
+# ~~imgfactory~~
 
 > API 详见代码
 
