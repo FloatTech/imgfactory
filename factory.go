@@ -26,6 +26,10 @@ func (dst *Factory) H() int {
 	return dst.im.Bounds().Size().Y
 }
 
+func (dst *Factory) Image() *image.NRGBA {
+	return dst.im
+}
+
 // Clone 克隆
 func (dst *Factory) Clone() *Factory {
 	var src Factory
