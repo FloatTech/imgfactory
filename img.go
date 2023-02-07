@@ -1,247 +1,215 @@
-package img
+// Package imgfactory 图片操作工具库
+package imgfactory
 
 import (
-	"bufio"
 	"bytes"
 	"image"
 	"image/color"
 	"image/draw"
 	"image/gif"
-	"image/png"
+	"io"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/FloatTech/gg"
 	"github.com/disintegration/imaging"
-	"github.com/fogleman/gg"
-	"github.com/sirupsen/logrus"
 )
 
-//  加载图片
-func Load(path string) image.Image {
-	var img image.Image
+// Load 加载图片
+func Load(path string) (img image.Image, err error) {
 	if strings.HasPrefix(path, "http") {
-		res, err := http.Get(path)
+		var res *http.Response
+		res, err = http.Get(path)
 		if err != nil {
-			logrus.Errorln("[img] load err:", err)
-			return nil
+			return
 		}
-		// 获得get请求响应的reader对象
-		reader := bufio.NewReaderSize(res.Body, 32*1024)
-		// 读取路径
-		img, _, err = image.Decode(reader)
-		res.Body.Close()
-		if err != nil {
-			logrus.Errorln("[img] decode err:", err)
-			return nil
-		}
-	} else {
-		//  加载路径
-		file, err := os.Open(path)
-		if err == nil {
-			// 读取路径
-			img, _, err = image.Decode(file)
-			file.Close()
-			if err != nil {
-				logrus.Errorln("[img] decode err:", err)
-				return nil
-			}
-		} else {
-			logrus.Errorln("[img] open file", path, "err:", err)
-			return nil
-		}
+		img, _, err = image.Decode(res.Body)
+		_ = res.Body.Close()
+		return
 	}
-	return img
+	return gg.LoadImage(path)
 }
 
-// 设置底图
-func NewFactory(w, h int, fillColor color.Color) *ImgFactory {
-	var dst ImgFactory
-	dst.W = w
-	dst.H = h
+// Parse 解析图片数据流
+func Parse(r io.Reader) (img image.Image, err error) {
+	img, _, err = image.Decode(r)
+	return
+}
+
+// NewFactory 设置底图
+func NewFactoryBG(w, h int, fillColor color.Color) *Factory {
 	c := color.NRGBAModel.Convert(fillColor).(color.NRGBA)
 	if (c == color.NRGBA{0, 0, 0, 0}) {
-		dst.Im = image.NewNRGBA(image.Rect(0, 0, w, h))
-	} else {
-		dst.Im = &image.NRGBA{
-			Pix:    bytes.Repeat([]byte{c.R, c.G, c.B, c.A}, w*h),
-			Stride: 4 * w,
-			Rect:   image.Rect(0, 0, w, h),
-		}
+		return NewFactory(image.NewNRGBA(image.Rect(0, 0, w, h)))
 	}
-	return &dst
+	return NewFactory(&image.NRGBA{
+		Pix:    bytes.Repeat([]byte{c.R, c.G, c.B, c.A}, w*h),
+		Stride: 4 * w,
+		Rect:   image.Rect(0, 0, w, h),
+	})
 }
 
-// 载入图片第一帧作底图
-func LoadFirstFrame(path string, w, h int) *ImgFactory {
-	return Size(Load(path), w, h)
+// LoadFirstFrame 载入图片第一帧作底图
+func LoadFirstFrame(path string, w, h int) (*Factory, error) {
+	im, err := Load(path)
+	if err != nil {
+		return nil, err
+	}
+	return Size(im, w, h), nil
 }
 
-//  加载图片每一帧图片
-func LoadAllFrames(path string, w, h int) []*image.NRGBA {
+// ParseFirstFrame 解析图片第一帧作底图
+func ParseFirstFrame(r io.Reader, w, h int) (*Factory, error) {
+	im, err := Parse(r)
+	if err != nil {
+		return nil, err
+	}
+	return Size(im, w, h), nil
+}
+
+// LoadAllFrames 加载每一帧图片
+func LoadAllFrames(path string, w, h int) ([]*Factory, error) {
 	var res *http.Response
 	var err error
 	var im *gif.GIF
-	var ims []*image.NRGBA
 	if strings.HasPrefix(path, "http") {
 		res, err = http.Get(path)
 		if err != nil {
-			logrus.Errorln("[img] load err:", err)
-			return nil
+			return nil, err
 		}
-		//  获得get请求响应的reader对象
-		reader := bufio.NewReaderSize(res.Body, 32*1024)
-		// 读取路径
-		im, err = gif.DecodeAll(reader)
-		res.Body.Close()
+		im, err = gif.DecodeAll(res.Body)
+		_ = res.Body.Close()
 		if err != nil {
-			logrus.Errorln("[img] decode err:", err)
-			return nil
+			return nil, err
 		}
 	} else {
-		//  加载路径
 		file, err := os.Open(path)
-		if err == nil {
-			im, err = gif.DecodeAll(file)
-			file.Close()
-			if err != nil {
-				logrus.Errorln("[img] decode err:", err)
-				return nil
-			}
-		} else {
-			logrus.Errorln("[img] open file", path, "err:", err)
-			return nil
+		if err != nil {
+			return nil, err
+		}
+		im, err = gif.DecodeAll(file)
+		_ = file.Close()
+		if err != nil {
+			return nil, err
 		}
 	}
-	im0 := Size(Load(path), w, h)
+	img, err := Load(path)
 	if err != nil {
-		ims = append(ims, Size(Load(path), w, h).Im)
-	} else {
-		for _, v := range im.Image {
-			im1 := Size(v, w, h).Im
-			im2 := im0.InsertUp(im1, 0, 0, 0, 0).Clone()
-			ims = append(ims, im2.Im)
-		}
+		return nil, err
 	}
-	return ims
+	im0 := Size(img, w, h)
+	ims := make([]*Factory, len(im.Image))
+	for i, v := range im.Image {
+		ims[i] = im0.InsertUp(Size(v, w, h).im, 0, 0, 0, 0).Clone()
+	}
+	return ims, nil
 }
 
-// 变形
-func Size(im image.Image, w, h int) *ImgFactory {
-	var dc ImgFactory
+// Size 变形
+func Size(im image.Image, w, h int) *Factory {
+	sz := im.Bounds().Size()
 	// 修改尺寸
-	if w > 0 && h > 0 {
-		dc.W = w
-		dc.H = h
-		dc.Im = imaging.Resize(im, w, h, imaging.Lanczos)
-	} else if w <= 0 && h <= 0 {
-		dc.W = im.Bounds().Size().X
-		dc.H = im.Bounds().Size().Y
-		dc.Im = image.NewNRGBA(image.Rect(0, 0, dc.W, dc.H))
-		draw.Over.Draw(dc.Im, dc.Im.Bounds(), im, im.Bounds().Min)
-	} else if w == 0 {
-		dc.H = h
-		dc.W = h * im.Bounds().Size().X / im.Bounds().Size().Y
-		dc.Im = imaging.Resize(im, dc.W, h, imaging.Lanczos)
-	} else if h == 0 {
-		dc.W = w
-		dc.H = w * im.Bounds().Size().Y / im.Bounds().Size().X
-		dc.Im = imaging.Resize(im, w, dc.H, imaging.Lanczos)
+	switch {
+	case w > 0 && h > 0:
+		return NewFactory(imaging.Resize(im, w, h, imaging.Lanczos))
+	case w == 0 && h > 0:
+		return NewFactory(imaging.Resize(im, h*sz.X/sz.Y, h, imaging.Lanczos))
+	case h == 0 && w > 0:
+		return NewFactory(imaging.Resize(im, w, w*sz.Y/sz.X, imaging.Lanczos))
+	default:
+		nim := image.NewNRGBA(image.Rect(0, 0, sz.X, sz.Y))
+		draw.Over.Draw(nim, nim.Bounds(), im, im.Bounds().Min)
+		return NewFactory(nim)
 	}
-	return &dc
 }
 
-// 旋转
-func Rotate(img image.Image, angle float64, w, h int) *ImgFactory {
-	im := Size(img, w, h)
-	var dc ImgFactory
-	dc.Im = imaging.Rotate(im.Im, angle, color.NRGBA{0, 0, 0, 0})
-	dc.W = dc.Im.Bounds().Size().X
-	dc.H = dc.Im.Bounds().Size().Y
-	return &dc
+// Rotate 旋转
+func Rotate(img image.Image, angle float64, w, h int) *Factory {
+	return NewFactory(imaging.Rotate(Size(img, w, h).im, angle, color.NRGBA{0, 0, 0, 0}))
 }
 
-// 横向合并图片
-func MergeW(im []*image.NRGBA) *ImgFactory {
-	dc := make([]*ImgFactory, len(im))
+// MergeW 横向合并图片
+func MergeW(im []*image.NRGBA) *Factory {
+	dc := make([]*Factory, len(im))
 	h := im[0].Bounds().Size().Y
 	w := 0
 	for i, value := range im {
 		dc[i] = Size(value, 0, h)
-		w += dc[i].W
+		w += dc[i].W()
 	}
-	ds := NewFactory(w, h, color.NRGBA{0, 0, 0, 0})
+	ds := NewFactoryBG(w, h, color.NRGBA{0, 0, 0, 0})
 	x := 0
 	for _, value := range dc {
-		ds = ds.InsertUp(value.Im, value.W, h, x, 0)
-		x += value.W
+		ds = ds.InsertUp(value.im, value.W(), h, x, 0)
+		x += value.W()
 	}
 	return ds
 }
 
-// 纵向合并图片
-func MergeH(im []*image.NRGBA) *ImgFactory {
-	dc := make([]*ImgFactory, len(im))
+// MergeH 纵向合并图片
+func MergeH(im []*image.NRGBA) *Factory {
+	dc := make([]*Factory, len(im))
 	w := im[0].Bounds().Size().X
 	h := 0
 	for i, value := range im {
 		dc[i] = Size(value, 0, w)
-		h += dc[i].H
+		h += dc[i].H()
 	}
-	ds := NewFactory(w, h, color.NRGBA{0, 0, 0, 0})
+	ds := NewFactoryBG(w, h, color.NRGBA{0, 0, 0, 0})
 	y := 0
 	for _, value := range dc {
-		ds = ds.InsertUp(value.Im, w, value.H, 0, y)
-		y += value.H
+		ds = ds.InsertUp(value.im, w, value.H(), 0, y)
+		y += value.H()
 	}
 	return ds
 }
 
-// 文本框 字体，大小，颜色 ，背景色，文本
-func Text(font string, size float64, col []int, col1 []int, txt string) *ImgFactory {
-	var dst ImgFactory
+// Text 文本框 字体, 大小, 颜色 , 背景色, 文本
+func Text(font string, size float64, col []int, col1 []int, txt string) *Factory {
+	var dst Factory
 	dc := gg.NewContext(10, 10)
 	dc.SetRGBA255(0, 0, 0, 0)
 	dc.Clear()
 	dc.SetRGBA255(col[0], col[1], col[2], col[3])
-	dc.LoadFontFace(font, size+size/2)
+	err := dc.LoadFontFace(font, size+size/2)
+	if err != nil {
+		return &dst
+	}
 	w, h := dc.MeasureString(txt)
-	w = w - size*2
+	w -= size * 2
 	dc1 := gg.NewContext(int(w), int(h))
 	dc1.SetRGBA255(col1[0], col1[1], col1[2], col1[3])
 	dc1.Clear()
 	dc1.SetRGBA255(col[0], col[1], col[2], col[3])
-	dc1.LoadFontFace(font, size)
+	err = dc1.LoadFontFace(font, size)
+	if err != nil {
+		return &dst
+	}
 	dc1.DrawStringAnchored(txt, w/2, h/2, 0.5, 0.5)
-	dst.Im = image.NewNRGBA(image.Rect(0, 0, int(w), int(h)))
-	draw.Over.Draw(dst.Im, dst.Im.Bounds(), dc1.Image(), dc1.Image().Bounds().Min)
-	dst.W, dst.H = dst.Im.Bounds().Size().X, dst.Im.Bounds().Size().Y
+	dst.im = image.NewNRGBA(image.Rect(0, 0, int(w), int(h)))
+	draw.Over.Draw(dst.im, dst.im.Bounds(), dc1.Image(), dc1.Image().Bounds().Min)
 	return &dst
 }
 
-// 保存png
-func SavePng(im image.Image, path string) error {
-	f, err := os.Create(path) // 创建文件
-	if err == nil {
-		err = png.Encode(f, im) // 写入
-		f.Close()
-		if err != nil {
-			logrus.Errorln("[img] save img err:", err)
-		}
-	} else {
-		logrus.Errorln("[img] create file at", path, "err:", err)
+// Limit 限制图片在 xmax*ymax 之内
+func Limit(img image.Image, xmax, ymax int) image.Image {
+	// 避免图片过大, 最大 xmax*ymax
+	x := img.Bounds().Size().X
+	y := img.Bounds().Size().Y
+	hasChanged := false
+	if x > xmax {
+		y = y * xmax / x
+		x = xmax
+		hasChanged = true
 	}
-	return err
-}
-
-// float64转uint8
-func floatUint8(a float64) uint8 {
-	b := int64(a + 0.5)
-	if b > 255 {
-		return 255
+	if y > ymax {
+		x = x * ymax / y
+		y = ymax
+		hasChanged = true
 	}
-	if b > 0 {
-		return uint8(b)
+	if hasChanged {
+		img = Size(img, x, y).im
 	}
-	return 0
+	return img
 }
