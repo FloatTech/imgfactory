@@ -3,7 +3,7 @@ module github.com/FloatTech/imgfactory
 go 1.18
 
 require (
-	github.com/FloatTech/gg v1.1.0
+	github.com/FloatTech/gg v1.1.2
 	github.com/disintegration/imaging v1.6.2
 	github.com/ericpauley/go-quantize v0.0.0-20200331213906-ae555eb2afa4
 )
