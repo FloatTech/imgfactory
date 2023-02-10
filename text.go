@@ -8,12 +8,7 @@ import (
 	"github.com/FloatTech/gg"
 )
 
-// RenderText 文字转图片 width 是图片宽度
-func RenderText(text, font string, width, fontSize int) (txtPic image.Image, err error) {
-	canvas := gg.NewContext(width, fontSize) // fake
-	if err = canvas.LoadFontFace(font, float64(fontSize)); err != nil {
-		return
-	}
+func renderText(canvas *gg.Context, text string, width, fontSize int) (txtPic image.Image, err error) {
 	buff := make([]string, 0, 32)
 	s := bufio.NewScanner(strings.NewReader(text))
 	line := strings.Builder{}
@@ -36,13 +31,28 @@ func RenderText(text, font string, width, fontSize int) (txtPic image.Image, err
 	canvas.SetRGB(1, 1, 1)
 	canvas.Clear()
 	canvas.SetRGB(0, 0, 0)
-	if err = canvas.LoadFontFace(font, float64(fontSize)); err != nil {
-		return
-	}
 	for i, v := range buff {
 		if v != "" {
 			canvas.DrawString(v, float64(width)*0.01, float64((i+1)*3)/2*h)
 		}
 	}
 	return canvas.Image(), nil
+}
+
+// RenderText 文字转图片 width 是图片宽度
+func RenderText(text, font string, width, fontSize int) (txtPic image.Image, err error) {
+	canvas := gg.NewContext(width, fontSize) // fake
+	if err = canvas.LoadFontFace(font, float64(fontSize)); err != nil {
+		return
+	}
+	return renderText(canvas, text, width, fontSize)
+}
+
+// RenderTextWith 文字转图片 width 是图片宽度
+func RenderTextWith(text string, font []byte, width, fontSize int) (txtPic image.Image, err error) {
+	canvas := gg.NewContext(width, fontSize) // fake
+	if err = canvas.ParseFontFace(font, float64(fontSize)); err != nil {
+		return
+	}
+	return renderText(canvas, text, width, fontSize)
 }
