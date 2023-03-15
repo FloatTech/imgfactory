@@ -71,7 +71,7 @@ func (dst *Factory) InsertUp(im image.Image, w, h, x, y int) *Factory {
 func (dst *Factory) InsertUpC(im image.Image, w, h, x, y int) *Factory {
 	im1 := Size(im, w, h)
 	// 叠加图片
-	draw.Over.Draw(dst.im, dst.im.Bounds(), im1.im, im1.im.Bounds().Min.Sub(image.Pt(x-im1.im.Bounds().Max.X/2, x-im1.im.Bounds().Max.Y/2)))
+	draw.Over.Draw(dst.im, dst.im.Bounds(), im1.im, im1.im.Bounds().Min.Sub(image.Pt(x-im1.im.Bounds().Max.X/2, y-im1.im.Bounds().Max.Y/2)))
 	return dst
 }
 
@@ -92,7 +92,7 @@ func (dst *Factory) InsertBottomC(im image.Image, w, h, x, y int) *Factory {
 	dc := dst.Clone()
 	sz := dst.im.Bounds().Size()
 	dst = NewFactoryBG(sz.X, sz.Y, color.NRGBA{0, 0, 0, 0})
-	draw.Over.Draw(dst.im, dst.im.Bounds(), im1.im, im1.im.Bounds().Min.Sub(image.Pt(x-im1.im.Bounds().Max.X/2, x-im1.im.Bounds().Max.Y/2)))
+	draw.Over.Draw(dst.im, dst.im.Bounds(), im1.im, im1.im.Bounds().Min.Sub(image.Pt(x-im1.im.Bounds().Max.X/2, y-im1.im.Bounds().Max.Y/2)))
 	draw.Over.Draw(dst.im, dst.im.Bounds(), dc.im, dc.im.Bounds().Min)
 	return dst
 }
