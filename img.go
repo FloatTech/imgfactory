@@ -106,6 +106,47 @@ func LoadAllFrames(path string, w, h int) ([]*Factory, error) {
 	return ims, nil
 }
 
+// LoadAllTrueFrames 加载每一帧显示出的图片
+func LoadAllTrueFrames(path string, w, h int) ([]*Factory, error) {
+	var res *http.Response
+	var err error
+	var im *gif.GIF
+	if strings.HasPrefix(path, "http") {
+		res, err = http.Get(path)
+		if err != nil {
+			return nil, err
+		}
+		im, err = gif.DecodeAll(res.Body)
+		_ = res.Body.Close()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		file, err := os.Open(path)
+		if err != nil {
+			return nil, err
+		}
+		im, err = gif.DecodeAll(file)
+		_ = file.Close()
+		if err != nil {
+			return nil, err
+		}
+	}
+	imgWidth, imgHeight := getGifDimensions(im)
+	overpaintImage := image.NewRGBA(image.Rect(0, 0, imgWidth, imgHeight))
+	img, err := Load(path)
+	if err != nil {
+		return nil, err
+	}
+	im0 := Size(img, w, h)
+	ims := make([]*Factory, len(im.Image))
+	for i, v := range im.Image {
+		draw.Draw(overpaintImage, overpaintImage.Bounds(), v, image.Point{}, draw.Over)
+		ims[i] = im0.InsertUp(Size(overpaintImage, w, h).im, 0, 0, 0, 0).Clone()
+	}
+	return ims, nil
+}
+
 // Size 变形
 func Size(im image.Image, w, h int) *Factory {
 	sz := im.Bounds().Size()
@@ -212,4 +253,29 @@ func Limit(img image.Image, xmax, ymax int) image.Image {
 		img = Size(img, x, y).im
 	}
 	return img
+}
+
+// 获取gif真实大小
+func getGifDimensions(gif *gif.GIF) (x, y int) {
+	var lowestX int
+	var lowestY int
+	var highestX int
+	var highestY int
+
+	for _, img := range gif.Image {
+		if img.Rect.Min.X < lowestX {
+			lowestX = img.Rect.Min.X
+		}
+		if img.Rect.Min.Y < lowestY {
+			lowestY = img.Rect.Min.Y
+		}
+		if img.Rect.Max.X > highestX {
+			highestX = img.Rect.Max.X
+		}
+		if img.Rect.Max.Y > highestY {
+			highestY = img.Rect.Max.Y
+		}
+	}
+
+	return highestX - lowestX, highestY - lowestY
 }
