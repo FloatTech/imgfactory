@@ -64,7 +64,7 @@ func WriteTo(img image.Image, f io.Writer) (n int64, err error) {
 	return int64(c), err
 }
 
-// GIFToBase64 gif内容转为base64
+// GIFToBase64 gif 内容转为 base64
 func GIFToBase64(gifImage *gif.GIF) (string, error) {
 	var buf bytes.Buffer
 	err := gif.EncodeAll(&buf, gifImage)
