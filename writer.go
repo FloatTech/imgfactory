@@ -46,7 +46,6 @@ func ToBase64(img image.Image) (base64Bytes []byte, err error) {
 }
 
 // ToBytes img 内容转为 []byte
-// 使用完 data 后必须调用 cl 放回缓冲区
 func ToBytes(img image.Image) (data []byte, err error) {
 	buffer := bytes.NewBuffer(make([]byte, 0, 1024*1024*4)) // 4MB
 	err = jpeg.Encode(buffer, img, &jpeg.Options{Quality: 70})
@@ -62,4 +61,15 @@ func WriteTo(img image.Image, f io.Writer) (n int64, err error) {
 	}
 	c, err := f.Write(data)
 	return int64(c), err
+}
+
+// GIF2Base64 gif 内容转为 base64
+func GIF2Base64(gifImage *gif.GIF) (string, error) {
+	buf := bytes.NewBuffer(make([]byte, 0, 1024*1024*4)) // 4MB
+	err := gif.EncodeAll(buf, gifImage)
+	if err != nil {
+		return "", err
+	}
+	encodedGIF := base64.StdEncoding.EncodeToString(buf.Bytes())
+	return "base64://" + encodedGIF, nil
 }
